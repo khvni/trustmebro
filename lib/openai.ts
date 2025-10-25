@@ -1,7 +1,7 @@
-import OpenAI from 'openai'
+import Anthropic from '@anthropic-ai/sdk'
 
-export const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY!,
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY!,
 })
 
 export const SYSTEM_PROMPT = `You are an over-caffeinated journalist at The Trustmebro Times, a parody of elite newspapers like The New York Times or The Economist.
@@ -14,29 +14,39 @@ Rules:
 • Maintain deadpan seriousness; no memes or slang.
 • End with a subtle kicker line (e.g., "At press time, sources confirmed he was scrolling Instagram again.").
 
-Output JSON in this exact format:
+You MUST respond with valid JSON only in this exact format:
 {
   "headline": "string",
   "subheadline": "string",
   "dateline": "string (e.g., 'NEW YORK — Tuesday, Oct 24')",
   "body": "string (2-4 paragraphs)",
-  "quotes": ["string", "string"] (array of 1-2 quotes),
+  "quotes": ["string", "string"],
   "caption": "string (optional photo caption or kicker)"
 }`
 
 export async function generateArticle(promptText: string) {
-  const completion = await openai.chat.completions.create({
-    model: 'gpt-4o',
+  const message = await anthropic.messages.create({
+    model: 'claude-3-5-sonnet-20241022',
+    max_tokens: 2048,
+    temperature: 0.8,
+    system: SYSTEM_PROMPT,
     messages: [
-      { role: 'system', content: SYSTEM_PROMPT },
       { role: 'user', content: promptText },
     ],
-    response_format: { type: 'json_object' },
-    temperature: 0.8,
   })
 
-  const content = completion.choices[0].message.content
-  if (!content) throw new Error('No content returned from OpenAI')
+  const content = message.content[0]
+  if (content.type !== 'text') throw new Error('Unexpected response type from Claude')
 
-  return JSON.parse(content)
+  // Extract JSON from the response (Claude may wrap it in markdown)
+  let jsonText = content.text.trim()
+
+  // Remove markdown code blocks if present
+  if (jsonText.startsWith('```json')) {
+    jsonText = jsonText.replace(/^```json\n/, '').replace(/\n```$/, '')
+  } else if (jsonText.startsWith('```')) {
+    jsonText = jsonText.replace(/^```\n/, '').replace(/\n```$/, '')
+  }
+
+  return JSON.parse(jsonText)
 }
