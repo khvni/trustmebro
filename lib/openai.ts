@@ -26,7 +26,7 @@ You MUST respond with valid JSON only in this exact format:
 
 export async function generateArticle(promptText: string) {
   const message = await anthropic.messages.create({
-    model: 'claude-3-5-sonnet-20241022',
+    model: 'claude-sonnet-4-5-20250929',
     max_tokens: 2048,
     temperature: 0.8,
     system: SYSTEM_PROMPT,
