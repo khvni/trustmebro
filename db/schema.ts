@@ -1,19 +1,16 @@
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
-import { sql } from 'drizzle-orm'
+import { pgTable, text, timestamp, jsonb } from 'drizzle-orm/pg-core'
 
-export const articles = sqliteTable('articles', {
+export const articles = pgTable('articles', {
   id: text('id').primaryKey(),
   slug: text('slug').notNull().unique(),
   headline: text('headline').notNull(),
   subheadline: text('subheadline').notNull(),
   dateline: text('dateline').notNull(),
   body: text('body').notNull(),
-  quotes: text('quotes', { mode: 'json' }).$type<string[]>().notNull().default(sql`'[]'`),
+  quotes: jsonb('quotes').$type<string[]>().notNull().default([]),
   caption: text('caption').default(''),
   promptRaw: text('prompt_raw').notNull(),
-  createdAt: integer('created_at', { mode: 'timestamp' })
-    .notNull()
-    .default(sql`(unixepoch())`),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
 })
 
 export type Article = typeof articles.$inferSelect

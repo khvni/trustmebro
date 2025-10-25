@@ -5,13 +5,13 @@ A parody newspaper generator that transforms mundane daily events into dramatic,
 ## Features
 
 - 🎨 Authentic newspaper design with vintage typography
-- 🤖 AI-powered article generation (OpenAI GPT-4)
+- 🤖 AI-powered article generation (Anthropic Claude)
 - 📰 Multi-column CSS Grid layout
 - 🔒 Rate limiting (60s per IP)
 - 🛡️ Profanity filtering
 - 📱 Responsive design (mobile, tablet, desktop)
 - ⚡ Next.js 14 with App Router
-- 💾 SQLite database via Turso
+- 💾 Neon Postgres database
 
 ## Getting Started
 
@@ -19,8 +19,8 @@ A parody newspaper generator that transforms mundane daily events into dramatic,
 
 - Node.js 18+
 - npm or yarn
-- OpenAI API key
-- Turso account (for database)
+- Anthropic API key
+- Neon account (for database)
 
 ### Installation
 
@@ -41,24 +41,17 @@ cp .env.example .env.local
 ```
 
 Edit `.env.local` and add:
-- `OPENAI_API_KEY` - Your OpenAI API key
-- `TURSO_DATABASE_URL` - Your Turso database URL
-- `TURSO_AUTH_TOKEN` - Your Turso auth token
+- `ANTHROPIC_API_KEY` - Your Anthropic API key
+- `DATABASE_URL` - Your Neon database connection string
 
 ### Database Setup
 
-1. Create a Turso database:
-```bash
-turso db create trustmebro-times
-```
+1. Create a Neon database:
+   - Go to [https://neon.tech](https://neon.tech)
+   - Sign up and create a new project
+   - Copy the connection string
 
-2. Get your database URL and auth token:
-```bash
-turso db show trustmebro-times
-turso db tokens create trustmebro-times
-```
-
-3. Push the schema to your database:
+2. Push the schema to your database:
 ```bash
 npm run db:push
 ```
@@ -100,10 +93,8 @@ trustmebro/
 
 ### Environment Variables for Production
 
-- `OPENAI_API_KEY`
-- `TURSO_DATABASE_URL`
-- `TURSO_AUTH_TOKEN`
-- `NEXT_PUBLIC_BASE_URL` (optional, your production URL)
+- `ANTHROPIC_API_KEY` - Your Anthropic API key
+- `DATABASE_URL` - Your Neon database connection string
 
 ## Usage
 
@@ -115,8 +106,8 @@ trustmebro/
 
 - **Frontend**: Next.js 14, React, TypeScript
 - **Styling**: CSS with CSS Grid, Google Fonts
-- **Database**: Turso (SQLite), Drizzle ORM
-- **AI**: OpenAI GPT-4
+- **Database**: Neon (Postgres), Drizzle ORM
+- **AI**: Anthropic Claude
 - **Deployment**: Vercel
 
 ## License
